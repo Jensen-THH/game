@@ -2,8 +2,20 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "workspaceName":"exampleworkspace5",
-        "computeName":"jathh",
+        "workspaceName": {
+            "defaultValue": "Standard_NV6",
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the name of the Azure Machine Learning workspace to which compute instance will be deployed"
+            }
+        },
+        "computeName": {
+            "defaultValue": "js",
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the name of the Azure Machine Learning compute instance to be deployed"
+            }
+        },
         "location": {
             "defaultValue": "[resourceGroup().location]",
             "type": "string",
@@ -11,7 +23,13 @@
                 "description": "Location of the Azure Machine Learning workspace."
             }
         },
-        "vmSize":"Standard_NV6",
+        "vmSize": {
+            "defaultValue": "Standard_NV6",
+            "type": "string",
+            "metadata": {
+                "description": "The VM size for compute instance"
+            }
+        },
         "vnetResourceGroupName": {
             "defaultValue": "",
             "type": "string",
@@ -59,6 +77,12 @@
             "metadata": {
                 "description": "Specifies the cmd arguments of the creation script in the storage volume of the Compute Instance."
             }
+        },
+        "schedules": {
+            "type": "object",
+            "metadata": {
+                "description": "Specifies the schedule policies for the compute instance"
+            }
         }
     },
     "variables": {
@@ -69,18 +93,18 @@
     "resources": [
         {
             "type": "Microsoft.MachineLearningServices/workspaces/computes",
-            "name": "jathh",
+            "name": "[concat(parameters('workspaceName'), '/', parameters('computeName'))]",
             "apiVersion": "2021-07-01",
             "location": "[parameters('location')]",
             "properties": {
                 "computeType": "ComputeInstance",
                 "properties": {
-                    "vmSize": "Standard_NV6",
+                    "vmSize": "[parameters('vmSize')]",
                     "subnet": "[if(and(not(empty(parameters('vnetResourceGroupName'))),not(empty(parameters('vnetName'))),not(empty(parameters('subnetName')))), variables('subnet'), json('null'))]",
                     "personalComputeInstanceSettings": {
                         "assignedUser": {
-                            "objectId": "012345678915412015412",
-                            "tenantId": "789641265452651285125"
+                            "objectId": "[parameters('objectId')]",
+                            "tenantId": "[parameters('tenantId')]"
                         }
                     },
                     "setupScripts": {
@@ -91,8 +115,8 @@
                                 "scriptArguments": "[parameters('creationScript.cmdArguments')]"
                             }
                         }
-                    }
-                    
+                    },
+                    "schedules": "[parameters('schedules')]"
                 }
             }
         }
