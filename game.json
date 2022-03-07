@@ -69,18 +69,18 @@
     "resources": [
         {
             "type": "Microsoft.MachineLearningServices/workspaces/computes",
-            "name": "[concat(parameters('workspaceName'), '/', parameters('computeName'))]",
+            "name": "jathh",
             "apiVersion": "2021-07-01",
             "location": "[parameters('location')]",
             "properties": {
                 "computeType": "ComputeInstance",
                 "properties": {
-                    "vmSize": "[parameters('vmSize')]",
+                    "vmSize": "Standard_NV6",
                     "subnet": "[if(and(not(empty(parameters('vnetResourceGroupName'))),not(empty(parameters('vnetName'))),not(empty(parameters('subnetName')))), variables('subnet'), json('null'))]",
                     "personalComputeInstanceSettings": {
                         "assignedUser": {
-                            "objectId": "[parameters('objectId')]",
-                            "tenantId": "[parameters('tenantId')]"
+                            "objectId": "012345678915412015412",
+                            "tenantId": "789641265452651285125"
                         }
                     },
                     "setupScripts": {
